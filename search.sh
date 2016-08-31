@@ -10,22 +10,24 @@ CURRENT_PAGE=".currentPage"
 function enterSearch(){
 	echo -e "Welcome to the Neopets Caption Contest Search. Please enter your search: "
 	read searchTerm
-	echo "What is the number of the lastest Caption Contest?"
-	read number
+	echo -e "What earliest contest it can be in?"
+	read first
+	echo -e "What latest contest it can be in?"
+	read end
 	echo "Searching for $searchTerm... Please wait"
-	search $searchTerm $number
+	search $searchTerm $first $end
 }
 
 function search(){
 #parameter $1 is the search term
 #parameter $2 is the number of contests
 	count=0
-	for i in $2;
+	for (( i=$2; i<=$3; i++ ));
 	do
-	lynx -dump "http://www.neopets.com/games/caption/caption_archive.phtml?place=`$i`">CURRENT_PAGE
-		if [ `grep -c "$1" "$CURRENT_PAGE"` -ne 0 ]
+		echo `lynx -dump "http://www.neopets.com/games/caption/caption_archive.phtml?place=$i"` >$CURRENT_PAGE
+		if [[ `grep -c "$1" "$CURRENT_PAGE"` -ne 0 ]]
 		then
-			echo $1
+			echo $i
 			count=$((count + 1))
 		fi
 	done
@@ -39,4 +41,5 @@ function search(){
 	fi
 }
 
+echo >CURRENT_PAGE
 enterSearch
