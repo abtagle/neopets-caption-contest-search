@@ -6,6 +6,7 @@
 #e.g. a username, a phrase used in the caption
 #It returns the contest number where the phrase appears
 
+CURRENT_PAGE=".currentPage"
 function enterSearch(){
 	echo -e "Welcome to the Neopets Caption Contest Search. Please enter your search: "
 	read searchTerm
@@ -18,14 +19,14 @@ function enterSearch(){
 function search(){
 #parameter $1 is the search term
 #parameter $2 is the number of contests
-	count = 0
+	count=0
 	for i in $2;
 	do
-	currentPage = wget "http://www.neopets.com/games/caption/caption_archive.phtml?place=`$i`"
-		if [ `grep -c "$1 "$currentPage"` -ne 0 ]
+	lynx -dump "http://www.neopets.com/games/caption/caption_archive.phtml?place=`$i`">CURRENT_PAGE
+		if [ `grep -c "$1" "$CURRENT_PAGE"` -ne 0 ]
 		then
 			echo $1
-			count = $(count + 1)
+			count=$((count + 1))
 		fi
 	done
 	echo "Done. Found $count results containing $searchTerm. Do you wish to try another search? (y to continue with new search)"
